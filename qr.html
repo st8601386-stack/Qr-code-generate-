@@ -2,70 +2,120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Flap QR Code</title>
+  <title>Flap Payment QR</title>
   <style>
     body {
-      background:#0b1220;
-      color:white;
+      background:#f5f6fa;
       font-family: Arial, sans-serif;
       text-align:center;
-      padding:40px;
+      padding:30px;
+    }
+    .card {
+      background:#fff;
+      max-width:400px;
+      margin:auto;
+      padding:25px;
+      border-radius:16px;
+      box-shadow:0 0 20px rgba(0,0,0,0.15);
     }
     .topbar {
       display:flex;
       align-items:center;
       justify-content:center;
       gap:10px;
-      margin-bottom:30px;
+      margin-bottom:15px;
     }
     .topbar img {
       width:50px;
       height:50px;
       border-radius:50%;
     }
-    h1 {margin:0; font-size:28px;}
+    .topbar h1 {
+      margin:0;
+      font-size:24px;
+      font-weight:bold;
+      color:#333;
+    }
+    .desc {
+      background:#f0f0f0;
+      padding:10px;
+      border-radius:8px;
+      margin:15px 0;
+      font-size:15px;
+      color:#555;
+    }
+    .amount {
+      font-size:28px;
+      font-weight:bold;
+      color:#2d3436;
+      margin:15px 0;
+    }
     #qr-container {
       display:inline-block;
       background:white;
       padding:20px;
       border-radius:16px;
-      box-shadow:0 0 20px rgba(0,0,0,0.5);
+      box-shadow:0 0 15px rgba(0,0,0,0.1);
     }
-    h2 {margin-top:20px;}
+    #qrcode {
+      margin:auto;
+    }
+    .footer {
+      margin-top:20px;
+      font-size:13px;
+      color:#888;
+    }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <img src="https://i.ibb.co/2yPp4tY/logo.png" alt="Flap Logo">
-    <h1>Flap Payment</h1>
+  <div class="card">
+    <!-- Topbar -->
+    <div class="topbar">
+      <img src="https://i.ibb.co/2yPp4tY/logo.png" alt="Flap Logo">
+      <h1>Flap Payment</h1>
+    </div>
+
+    <!-- Description -->
+    <div class="desc" id="descBox">
+      Loading description...
+    </div>
+
+    <!-- Amount -->
+    <div class="amount" id="amtText"></div>
+
+    <!-- QR Code -->
+    <div id="qr-container">
+      <div id="qrcode"></div>
+    </div>
+
+    <div class="footer">Scan this QR to complete payment</div>
   </div>
 
-  <div id="qr-container">
-    <div id="qrcode"></div>
-  </div>
-  <h2 id="amtText"></h2>
-
+  <!-- QR Code Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    // Get amount from URL
+    // Get URL Params
     const urlParams = new URLSearchParams(window.location.search);
     const amount = urlParams.get("amount");
+    const desc = urlParams.get("desc") || "Payment to Flap";
 
     const upiId = "st8601386@okicici";
     const name = "Flap";
-    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(desc)}&cu=INR`;
 
-    // Show QR
+    // Show Amount & Description
+    document.getElementById("amtText").innerText = "₹ " + amount;
+    document.getElementById("descBox").innerText = desc;
+
+    // Generate QR
     new QRCode(document.getElementById("qrcode"), {
       text: upiUrl,
-      width: 250,
-      height: 250,
+      width: 220,
+      height: 220,
       colorDark: "#000000",
       colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.H
     });
-
-    document.getElementById("amtText").innerText = "Amount: ₹" + amount;
   </script>
 </body>
 </html>
