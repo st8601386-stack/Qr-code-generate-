@@ -17,6 +17,7 @@
       padding:25px;
       border-radius:16px;
       box-shadow:0 0 20px rgba(0,0,0,0.15);
+      position: relative;
     }
     .topbar {
       display:flex;
@@ -34,6 +35,160 @@
       margin:0;
       font-size:24px;
       font-weight:bold;
+      color:#333;
+    }
+    .desc {
+      background:#f0f0f0;
+      padding:10px;
+      border-radius:8px;
+      margin:15px 0;
+      font-size:15px;
+      color:#555;
+    }
+    .amount {
+      font-size:28px;
+      font-weight:bold;
+      color:#2d3436;
+      margin:15px 0;
+    }
+    #qr-container {
+      display:inline-block;
+      background:white;
+      padding:20px;
+      border-radius:16px;
+      box-shadow:0 0 15px rgba(0,0,0,0.1);
+    }
+    #timer {
+      margin-top:15px;
+      font-size:18px;
+      font-weight:bold;
+      color:#d63031;
+    }
+    .footer {
+      margin-top:15px;
+      font-size:13px;
+      color:#888;
+    }
+    /* Popup */
+    .popup {
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.6);
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+    }
+    .popup-content {
+      background:#fff;
+      padding:30px;
+      border-radius:12px;
+      text-align:center;
+      animation: scaleUp 0.3s ease;
+    }
+    .popup-content h2 {
+      color:green;
+      margin:0 0 10px;
+    }
+    @keyframes scaleUp {
+      from {transform:scale(0.5); opacity:0;}
+      to {transform:scale(1); opacity:1;}
+    }
+    button.simulate {
+      margin-top:20px;
+      padding:10px 20px;
+      font-size:16px;
+      border:none;
+      border-radius:6px;
+      background:#0984e3;
+      color:#fff;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- Topbar -->
+    <div class="topbar">
+      <img src="https://i.ibb.co/2yPp4tY/logo.png" alt="Flap Logo">
+      <h1>Flap Payment</h1>
+    </div>
+
+    <!-- Description -->
+    <div class="desc" id="descBox">Loading description...</div>
+
+    <!-- Amount -->
+    <div class="amount" id="amtText"></div>
+
+    <!-- QR Code -->
+    <div id="qr-container">
+      <div id="qrcode"></div>
+    </div>
+
+    <div id="timer">Time left: 180s</div>
+    <div class="footer">Scan QR to complete payment</div>
+    
+    <!-- For demo only -->
+    <button class="simulate" onclick="paymentSuccess()">💳 Simulate Payment</button>
+  </div>
+
+  <!-- Success Popup -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h2>✅ Payment Received</h2>
+      <p>Thank you! Your payment was successful.</p>
+    </div>
+  </div>
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    // Get URL Params
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = urlParams.get("amount");
+    const desc = urlParams.get("desc") || "Payment to Flap";
+
+    const upiId = "st8601386@okicici";
+    const name = "Flap";
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(desc)}&cu=INR`;
+
+    // Show Amount & Description
+    document.getElementById("amtText").innerText = "₹ " + amount;
+    document.getElementById("descBox").innerText = desc;
+
+    // Generate QR
+    new QRCode(document.getElementById("qrcode"), {
+      text: upiUrl,
+      width: 220,
+      height: 220,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Timer countdown
+    let timeLeft = 180;
+    const timerEl = document.getElementById("timer");
+    const countdown = setInterval(()=>{
+      timeLeft--;
+      timerEl.innerText = "Time left: " + timeLeft + "s";
+
+      if(timeLeft <= 0){
+        clearInterval(countdown);
+        alert("❌ Payment not received. Session expired.");
+        window.location.reload();
+      }
+    },1000);
+
+    // Payment success simulation
+    function paymentSuccess(){
+      clearInterval(countdown);
+      document.getElementById("popup").style.display="flex";
+    }
+  </script>
+</body>
+</html>
       color:#333;
     }
     .desc {
