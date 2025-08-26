@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flap QR Code</title>
+  <style>
+    body {
+      background:#0b1220;
+      color:white;
+      font-family: Arial, sans-serif;
+      text-align:center;
+      padding:40px;
+    }
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:30px;
+    }
+    .topbar img {
+      width:50px;
+      height:50px;
+      border-radius:50%;
+    }
+    h1 {margin:0; font-size:28px;}
+    #qr-container {
+      display:inline-block;
+      background:white;
+      padding:20px;
+      border-radius:16px;
+      box-shadow:0 0 20px rgba(0,0,0,0.5);
+    }
+    h2 {margin-top:20px;}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <img src="https://i.ibb.co/2yPp4tY/logo.png" alt="Flap Logo">
+    <h1>Flap Payment</h1>
+  </div>
+
+  <div id="qr-container">
+    <div id="qrcode"></div>
+  </div>
+  <h2 id="amtText"></h2>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    // Get amount from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = urlParams.get("amount");
+
+    const upiId = "st8601386@okicici";
+    const name = "Flap";
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+
+    // Show QR
+    new QRCode(document.getElementById("qrcode"), {
+      text: upiUrl,
+      width: 250,
+      height: 250,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById("amtText").innerText = "Amount: ₹" + amount;
+  </script>
+</body>
+</html>
